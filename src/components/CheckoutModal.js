@@ -1,11 +1,12 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useFood } from '@/context/FoodContext';
 import { CloseIcon, CheckIcon, LocationIcon } from './Icons';
 
 export default function CheckoutModal() {
   const {
+    user,
     isCheckoutOpen,
     setIsCheckoutOpen,
     setIsTrackerOpen,
@@ -30,6 +31,18 @@ export default function CheckoutModal() {
     landmark: 'Near Central Park',
     deliveryInstructions: 'Ring bell and leave at door',
   });
+
+  // Pre-fill user data if logged in
+  useEffect(() => {
+    if (user) {
+      setFormData(prev => ({
+        ...prev,
+        name: user.name || prev.name,
+        phone: user.phone || prev.phone,
+        address: user.address || prev.address,
+      }));
+    }
+  }, [user]);
 
   const [paymentMethod, setPaymentMethod] = useState('upi'); // 'upi', 'card', 'cod'
   const [cardNumber, setCardNumber] = useState('4532 •••• •••• 8920');

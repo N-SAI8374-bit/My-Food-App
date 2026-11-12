@@ -26,6 +26,9 @@ export function FoodProvider({ children }) {
   const [orders, setOrders] = useState([]);
   const [activeOrder, setActiveOrder] = useState(null);
 
+  // Authentication & User profile state
+  const [user, setUser] = useState(null);
+
   // Theme
   const [theme, setTheme] = useState('light');
 
@@ -54,6 +57,9 @@ export function FoodProvider({ children }) {
 
       const savedFavs = localStorage.getItem('flavorcraft_favs');
       if (savedFavs) setFavorites(JSON.parse(savedFavs));
+
+      const savedUser = localStorage.getItem('flavorcraft_user');
+      if (savedUser) setUser(JSON.parse(savedUser));
 
       const savedTheme = localStorage.getItem('flavorcraft_theme');
       if (savedTheme) {
@@ -288,9 +294,41 @@ export function FoodProvider({ children }) {
     return Math.max(0, total);
   }, [cartSubtotal, deliveryFee, taxesAndRestaurantCharges, tip, discountAmount, cart.length]);
 
+  // User Authentication Handlers
+  const loginUser = (userData) => {
+    setUser(userData);
+    try {
+      localStorage.setItem('flavorcraft_user', JSON.stringify(userData));
+    } catch (e) {}
+    showToast(`Welcome back, ${userData.name}! 👋`);
+  };
+
+  const logoutUser = () => {
+    setUser(null);
+    try {
+      localStorage.removeItem('flavorcraft_user');
+    } catch (e) {}
+    showToast('Signed out successfully. Come back soon! 🍔', 'info');
+  };
+
+  const updateUser = (updates) => {
+    setUser(prev => {
+      const nextUser = { ...prev, ...updates };
+      try {
+        localStorage.setItem('flavorcraft_user', JSON.stringify(nextUser));
+      } catch (e) {}
+      return nextUser;
+    });
+    showToast('Profile updated successfully!');
+  };
+
   return (
     <FoodContext.Provider
       value={{
+        user,
+        loginUser,
+        logoutUser,
+        updateUser,
         foods,
         categories,
         filteredFoods,

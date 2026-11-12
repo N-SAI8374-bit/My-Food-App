@@ -26,6 +26,19 @@ npm start
 
 ## ✨ Features & Capabilities
 
+### 🔐 User Authentication & Login Page (`/login`)
+- **Dual Tab Mode**: Seamlessly switch between **Sign In** and **Create Account (Sign Up)**.
+- **1-Click Quick Demo Logins**:
+  - 👤 **Alex Johnson** (`alex@example.com` / `password123`)
+  - 👩 **Priya Sharma** (`priya@example.com` / `password123`)
+  - 🍕 **Foodie Explorer** (`demo@flavorfleet.com` / `demo123`)
+- **Feature Showcase**: Left-hand showcase highlighting 25-min delivery, member coupons, live order tracking, and social proof ratings.
+- **Form Controls & Security**: Password visibility toggle (show/hide), "Remember Me" checkbox, and 256-bit SSL encrypted reassurance badge.
+- **Forgot Password**: Password reset modal with simulated recovery instructions.
+- **Social & Guest Sign-In**: 1-click "Continue with Google" and "Instant Guest Access".
+- **Navbar Profile Dropdown**: Once signed in, the header displays the user's avatar/initials, name, past orders shortcut, wishlist shortcut, and sign-out option.
+- **Auto Checkout Pre-fill**: Logged-in customer details automatically pre-populate the checkout delivery address.
+
 ### 🍕 Interactive Menu & Dynamic Filtering
 - **Category Filter**: Filter through Artisan Pizzas, Gourmet Burgers, Dum Biryanis, Asian Ramen & Bowls, Salads, Desserts, and Cool Beverages.
 - **Dietary Filter**: Instant toggle for **Pure Veg 🌿**, **Non-Veg 🍗**, or **All Dishes**.
@@ -80,10 +93,13 @@ Project 1/
 ├── src/
 │   ├── app/
 │   │   ├── api/
+│   │   │   ├── auth/route.js         # Node.js API: Login, Signup, Reset & Demo Auth
 │   │   │   ├── categories/route.js   # Node.js API: Categories endpoint
 │   │   │   ├── coupons/route.js      # Node.js API: Coupon validation & discount
 │   │   │   ├── foods/route.js        # Node.js API: Food catalog with filters
 │   │   │   └── orders/route.js       # Node.js API: Order creation & live tracking
+│   │   ├── login/
+│   │   │   └── page.js               # Dedicated Authentication & Login Page
 │   │   ├── globals.css               # Master responsive CSS & theme styles
 │   │   ├── layout.js                 # Root Next.js layout & metadata
 │   │   └── page.js                   # Main application landing & menu page

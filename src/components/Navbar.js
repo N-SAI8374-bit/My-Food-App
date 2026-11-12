@@ -1,6 +1,7 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
+import Link from 'next/link';
 import { useFood } from '@/context/FoodContext';
 import {
   CartIcon,
@@ -11,10 +12,13 @@ import {
   SunIcon,
   MoonIcon,
   BikeIcon,
+  UserIcon,
 } from './Icons';
 
 export default function Navbar() {
   const {
+    user,
+    logoutUser,
     cartItemCount,
     favorites,
     activeOrder,
@@ -28,17 +32,31 @@ export default function Navbar() {
     setSearchQuery,
   } = useFood();
 
+  const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
+  const profileMenuRef = useRef(null);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (profileMenuRef.current && !profileMenuRef.current.contains(event.target)) {
+        setIsProfileMenuOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
   return (
     <header className="navbar-header">
       <div className="navbar-container">
         {/* Brand Logo */}
-        <div className="brand-wrapper" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
+        <Link href="/" className="brand-wrapper">
           <div className="brand-logo-icon">🍔</div>
           <div className="brand-text-group">
             <span className="brand-title">Flavor<span className="brand-accent">Fleet</span></span>
             <span className="brand-subtitle">Fast & Fresh Food</span>
           </div>
-        </div>
+        </Link>
 
         {/* Location selector */}
         <div className="location-pill">
@@ -118,6 +136,90 @@ export default function Navbar() {
           >
             {theme === 'light' ? <MoonIcon size={20} /> : <SunIcon size={20} />}
           </button>
+
+          {/* User Account / Profile Menu */}
+          {user ? (
+            <div className="nav-profile-menu-container" ref={profileMenuRef}>
+              <button
+                className="nav-profile-trigger"
+                onClick={() => setIsProfileMenuOpen(prev => !prev)}
+                title="Account Menu"
+              >
+                {user.avatar ? (
+                  <img src={user.avatar} alt={user.name} className="nav-profile-avatar" />
+                ) : (
+                  <div className="nav-profile-initials">
+                    {user.name ? user.name[0].toUpperCase() : 'U'}
+                  </div>
+                )}
+                <span className="nav-profile-name">{user.name.split(' ')[0]}</span>
+                <span className="nav-profile-caret">▾</span>
+              </button>
+
+              {isProfileMenuOpen && (
+                <div className="nav-profile-dropdown">
+                  <div className="nav-dropdown-header">
+                    <div className="nav-dropdown-avatar-wrap">
+                      {user.avatar ? (
+                        <img src={user.avatar} alt={user.name} className="dropdown-avatar" />
+                      ) : (
+                        <div className="dropdown-avatar-placeholder">
+                          {user.name ? user.name[0].toUpperCase() : 'U'}
+                        </div>
+                      )}
+                    </div>
+                    <div className="nav-dropdown-user-info">
+                      <h4 className="dropdown-user-name">{user.name}</h4>
+                      <p className="dropdown-user-email">{user.email}</p>
+                      {user.phone && <p className="dropdown-user-phone">{user.phone}</p>}
+                    </div>
+                  </div>
+
+                  <div className="nav-dropdown-divider"></div>
+
+                  <button
+                    className="nav-dropdown-item"
+                    onClick={() => {
+                      setIsProfileMenuOpen(false);
+                      setIsHistoryOpen(true);
+                    }}
+                  >
+                    <HistoryIcon size={16} />
+                    <span>My Past Orders</span>
+                  </button>
+
+                  <button
+                    className="nav-dropdown-item"
+                    onClick={() => {
+                      setIsProfileMenuOpen(false);
+                      setIsFavoritesOpen(true);
+                    }}
+                  >
+                    <HeartIcon size={16} filled={true} />
+                    <span>Saved Favorites</span>
+                  </button>
+
+                  <div className="nav-dropdown-divider"></div>
+
+                  <button
+                    className="nav-dropdown-item signout-item"
+                    onClick={() => {
+                      setIsProfileMenuOpen(false);
+                      logoutUser();
+                    }}
+                  >
+                    <span className="signout-icon">🚪</span>
+                    <span>Sign Out</span>
+                  </button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <Link href="/login" className="login-nav-btn" title="Sign In or Register">
+              <UserIcon size={18} />
+              <span className="login-btn-text">Sign In</span>
+            </Link>
+          )}
 
           {/* Cart Button */}
           <button
